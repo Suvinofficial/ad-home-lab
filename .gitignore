@@ -1,0 +1,4 @@
+reports/
+*.log
+Thumbs.db
+.DS_Store
