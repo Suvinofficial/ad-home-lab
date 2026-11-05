@@ -2,7 +2,7 @@
 
 A small company's Windows network, built and automated with PowerShell: a domain controller running **AD DS, DNS and DHCP**, a domain-joined Windows 11 client, **15 users in 5 departments**, **Group Policy** for security and lockdown, and **department file shares** with NTFS permissions and mapped drives.
 
-> **Status: lab build in progress.** Design, automation scripts and build guide are complete. Screenshots and test results are added as I complete each step.
+> **Status:** the domain controller is built and verified (Windows Server 2025, 4 Nov 2026). The Windows 11 client and helpdesk tests are next.
 
 ![Lab architecture](docs/architecture.png)
 
@@ -51,21 +51,36 @@ The full build and test steps are in **[GUIDE.md](GUIDE.md)**.
 - Moved a user between departments (OU + group change) and confirmed their drive changed
 - Broke client DNS on purpose and fixed it, which is the most common reason a PC can't find the domain
 
-<!-- UNHIDE once your screenshots are in a "screenshots" folder:
+## Domain controller: results
+
+Built on Windows Server 2025 Standard Evaluation in VirtualBox (2 vCPU, 2 GB RAM), scripts 01–07 run in order with a transcript log and no errors.
+
+| Check | Result |
+|---|---|
+| DC01 static IP and name | 192.168.50.10, DC01 |
+| Forest / domain | `lab.local` (NetBIOS `LAB`), AD DS + DNS |
+| DHCP | Scope 192.168.50.0/24, range .100–.200, **Active**, authorised in AD |
+| OU tree | LAB Company → Users (Admin, IT, Finance, HR, Sales), Computers (Workstations, Servers), Groups, Service Accounts, Disabled Users |
+| Users | **15** created from `users.csv` (must change password at first logon) |
+| Group Policy | LAB - Screen Lock, LAB - Restrict Control Panel, LAB - Logon Banner (+ password/lockout policy) |
+| File shares | Finance$, HR$, IT$, Sales$, Public, plus the logon script in NETLOGON |
+| Screen lock GPO | Confirmed: DC01 locked itself after 10 minutes idle |
+
 ## Screenshots
 
-( Add your own screenshots to a "screenshots" folder with these names. )
 | | |
 |---|---|
-| OU structure and users | ![ADUC](screenshots/aduc-ou-structure.png) |
+| OU structure and Finance users | ![ADUC](screenshots/aduc-ou-structure.png) |
 | Group Policy objects | ![GPMC](screenshots/gpmc-gpos.png) |
+| Shares and DHCP scope (PowerShell) | ![Shares](screenshots/shares-and-dhcp.png) |
+| OU list, DHCP, empty error log | ![Checks](screenshots/ou-and-dhcp-check.png) |
+
+<!-- Client screenshots to add after CL01 is built:
 | DHCP lease for the client | ![DHCP](screenshots/dhcp-leases.png) |
-| Bulk user creation | ![Users](screenshots/bulk-users-script.png) |
 | gpresult on the client | ![gpresult](screenshots/client-gpresult.png) |
 | Mapped drives | ![Drives](screenshots/client-drives.png) |
 | Share access denied | ![Denied](screenshots/access-denied.png) |
 | Account unlock | ![Unlock](screenshots/account-unlock.png) |
-
 -->
 
 <!-- UNHIDE and fill in once the lab is done:
